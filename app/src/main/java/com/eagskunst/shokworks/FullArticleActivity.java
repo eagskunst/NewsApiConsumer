@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.eagskunst.shokworks.objects.Article;
+import com.eagskunst.shokworks.utility.PreferencesHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,8 +34,10 @@ public class FullArticleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         sharedPreferences = getSharedPreferences("USER_PREFERENCES",MODE_PRIVATE);
-        loadSavedList();
+        savedList.addAll(PreferencesHandler.loadList(sharedPreferences));
+
         setContentView(R.layout.activity_full_article);
         String url = getIntent().getExtras().getString("url");
         article = getIntent().getExtras().getParcelable("article");
@@ -46,10 +49,7 @@ public class FullArticleActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                Gson gson = new Gson();
-                String list = gson.toJson(savedList);
-                editor.putString("savedList",list).commit();
+                PreferencesHandler.saveList(sharedPreferences.edit(),savedList);
                 Log.d(TAG, "onClick: saved!"+article.getTitle());
                 finish();
             }
@@ -59,16 +59,6 @@ public class FullArticleActivity extends AppCompatActivity {
         configureWebView();
         webView.loadUrl(url);
         webView.setVisibility(View.VISIBLE);
-    }
-
-    private void loadSavedList() {
-        String list = sharedPreferences.getString("savedList",null);
-        Gson gson = new Gson();
-
-        Type type = new TypeToken<List<Article>>(){}.getType();
-
-        List<Article> retrievedList = gson.fromJson(list,type);
-        savedList.addAll(retrievedList);
     }
 
 
@@ -98,16 +88,18 @@ public class FullArticleActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_save:{
                 if(!isSaved){
+                    isSaved = true;
                     savedList.add(0,article);
                     Log.d(TAG, "onOptionsItemSelected: size: "+savedList.size());
                     savedItem.setIcon(R.drawable.ic_action_save);
-                    return true;
                 }
                 else {
+                    isSaved = false;
                     savedItem.setIcon(R.drawable.ic_action_unsaved);
                     savedList.remove(article);
                 }
                 setResult(1);
+                return true;
             }
             default:
                 return super.onOptionsItemSelected(item);

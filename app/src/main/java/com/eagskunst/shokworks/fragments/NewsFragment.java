@@ -20,6 +20,7 @@ import com.eagskunst.shokworks.adapters.NewsAdapter;
 import com.eagskunst.shokworks.objects.Article;
 import com.eagskunst.shokworks.objects.Info;
 import com.eagskunst.shokworks.utility.ArticlesLoader;
+import com.eagskunst.shokworks.utility.PreferencesHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -85,25 +86,13 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
             loader.execute(new Object());
         }
         else {
-            loadSavedList();
+            onFragmentShow();
         }
         newsAdapter = new NewsAdapter(articleList,viewArticle());
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
 
         manageRecyclerView(recyclerView);
         return view;
-    }
-
-    private void loadSavedList() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("USER_PREFERENCES",Context.MODE_PRIVATE);
-        String list = sharedPreferences.getString("savedList",null);
-        Gson gson = new Gson();
-
-        Type type = new TypeToken<List<Article>>(){}.getType();
-
-        List<Article> retrievedList = gson.fromJson(list,type);
-        articleList.addAll(retrievedList);
-        Log.d(TAG, "loadSavedList: size:"+articleList.size());
     }
 
     private NewsAdapter.NewsViewHolder.AdapterClickLister viewArticle() {
@@ -134,14 +123,14 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
     @Override
     public void onFragmentShow() {
         articleList.clear();
-        loadSavedList();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("USER_PREFERENCES",Context.MODE_PRIVATE);
+        articleList.addAll(PreferencesHandler.loadList(sharedPreferences));
         newsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1 && resultCode == 1){
-            Log.d(TAG, "onActivityResult: enter if!!");
             onFragmentShow();
         }
     }

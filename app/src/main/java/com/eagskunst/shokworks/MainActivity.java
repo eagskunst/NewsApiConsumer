@@ -12,6 +12,7 @@ import com.eagskunst.shokworks.fragments.NewsFragment;
 import com.eagskunst.shokworks.fragments.PageAdapter;
 import com.eagskunst.shokworks.objects.Article;
 import com.eagskunst.shokworks.objects.Source;
+import com.eagskunst.shokworks.utility.PreferencesHandler;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -31,9 +32,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: enter first_launch");
             SharedPreferences.Editor editor = sharedPreferences.edit();
             List<Article> articleList = new ArrayList<>();
-            Gson gson = new Gson();
-            String list = gson.toJson(articleList);
-            editor.putString("savedList",list).apply();
+            PreferencesHandler.saveList(editor,articleList);
             editor.putBoolean("first_launch",false).apply();
         }
 
