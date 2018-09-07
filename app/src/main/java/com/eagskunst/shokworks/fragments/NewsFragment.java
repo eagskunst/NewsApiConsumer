@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eagskunst.shokworks.FullArticleActivity;
+import com.eagskunst.shokworks.MainActivity;
 import com.eagskunst.shokworks.R;
 import com.eagskunst.shokworks.adapters.NewsAdapter;
 import com.eagskunst.shokworks.objects.Article;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements MainActivity.FragmentChanged{
 
     private boolean isSavedFragment;
     private final String TAG = "NewsFragment";
@@ -39,8 +40,6 @@ public class NewsFragment extends Fragment {
     private NewsAdapter newsAdapter;
     private List<Article> articleList = new ArrayList<>();
 
-
-    private OnFragmentInteractionListener mListener;
 
     public NewsFragment() {
         // Required empty public constructor
@@ -95,13 +94,6 @@ public class NewsFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        loadSavedList();
-        newsAdapter.notifyDataSetChanged();
-    }
-
     private void loadSavedList() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("USER_PREFERENCES",Context.MODE_PRIVATE);
         String list = sharedPreferences.getString("savedList",null);
@@ -121,7 +113,10 @@ public class NewsFragment extends Fragment {
                 Intent i = new Intent(getActivity(),FullArticleActivity.class);
                 i.putExtra("url",article.getUrl());
                 i.putExtra("article",article);
-                startActivity(i);
+                if(isSavedFragment)
+                    startActivityForResult(i,1);
+                else
+                    startActivity(i);
             }
         };
     }
@@ -136,41 +131,18 @@ public class NewsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
     }
 
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-    /*
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void onFragmentShow() {
+        articleList.clear();
+        loadSavedList();
+        newsAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-*/
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1 && resultCode == 1){
+            Log.d(TAG, "onActivityResult: enter if!!");
+            onFragmentShow();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.eagskunst.shokworks;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,11 +23,12 @@ import java.util.List;
 public class FullArticleActivity extends AppCompatActivity {
 
     private final String TAG = "FullArticleActivity";
-    private boolean isSaved = false;
+    private boolean isSaved;
     private WebView webView;
     private SharedPreferences sharedPreferences;
     private List<Article> savedList = new ArrayList<>();
     private Article article;
+    private MenuItem savedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public class FullArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_article);
         String url = getIntent().getExtras().getString("url");
         article = getIntent().getExtras().getParcelable("article");
+        isSaved = checkIfArticleExist();
         webView = findViewById(R.id.mainwebview);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setToolbar(toolbar,url,true);
@@ -48,7 +49,6 @@ public class FullArticleActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 Gson gson = new Gson();
                 String list = gson.toJson(savedList);
-                editor.remove("savedList").commit();
                 editor.putString("savedList",list).commit();
                 Log.d(TAG, "onClick: saved!"+article.getTitle());
                 finish();
@@ -61,7 +61,6 @@ public class FullArticleActivity extends AppCompatActivity {
         webView.setVisibility(View.VISIBLE);
     }
 
-
     private void loadSavedList() {
         String list = sharedPreferences.getString("savedList",null);
         Gson gson = new Gson();
@@ -73,11 +72,23 @@ public class FullArticleActivity extends AppCompatActivity {
     }
 
 
-
+    private boolean checkIfArticleExist() {
+        int size = savedList.size();
+        for(int i = 0;i<size;i++){
+            if(savedList.get(i).getUrl().equals(article.getUrl())){
+                this.article = savedList.get(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_buttons,menu);
+        savedItem = menu.getItem(0);
+        if (isSaved)
+            savedItem.setIcon(R.drawable.ic_action_save);
         return true;
     }
 
@@ -86,10 +97,17 @@ public class FullArticleActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_save:{
-                isSaved = true;
-                savedList.add(article);
-                Log.d(TAG, "onOptionsItemSelected: size: "+savedList.size());
-                return true;
+                if(!isSaved){
+                    savedList.add(0,article);
+                    Log.d(TAG, "onOptionsItemSelected: size: "+savedList.size());
+                    savedItem.setIcon(R.drawable.ic_action_save);
+                    return true;
+                }
+                else {
+                    savedItem.setIcon(R.drawable.ic_action_unsaved);
+                    savedList.remove(article);
+                }
+                setResult(1);
             }
             default:
                 return super.onOptionsItemSelected(item);

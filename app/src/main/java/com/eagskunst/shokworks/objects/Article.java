@@ -12,11 +12,8 @@ public class Article implements Parcelable {
     private String urlToImage;
     private String publishedAt;
 
-    public Article(){
-
-    }
-
     protected Article(Parcel in) {
+        source = in.readParcelable(Source.class.getClassLoader());
         author = in.readString();
         title = in.readString();
         description = in.readString();
@@ -112,6 +109,7 @@ public class Article implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(source,1);
         parcel.writeString(author);
         parcel.writeString(title);
         parcel.writeString(description);
