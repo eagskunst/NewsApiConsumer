@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +18,11 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder>{
 
     private List<Article> articleList;
+    private NewsViewHolder.AdapterClickLister adapterClickLister;
 
-    public NewsAdapter(List<Article> articleList){
+    public NewsAdapter(List<Article> articleList, NewsViewHolder.AdapterClickLister adapterClickLister){
         this.articleList = articleList;
+        this.adapterClickLister = adapterClickLister;
     }
 
     @NonNull
@@ -46,7 +49,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             holder.description.setVisibility(View.GONE);
         else
             holder.description.setText(articleList.get(position).getDescription());
-
+        holder.bind(articleList.get(position),adapterClickLister);
     }
 
     @Override
@@ -64,6 +67,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         private TextView title;
         private TextView secondaryText;
         private TextView description;
+        private TextView action1;
 
         public NewsViewHolder(View itemView) {
             super(itemView);
@@ -71,6 +75,20 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             this.title = itemView.findViewById(R.id.title_cardview);
             this.secondaryText = itemView.findViewById(R.id.secondarytext_cardview);
             this.description = itemView.findViewById(R.id.description_cardview);
+            this.action1 = itemView.findViewById(R.id.action_cardview);
+        }
+
+        private void bind(final Article article, final AdapterClickLister adapterClickLister){
+            action1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    adapterClickLister.onItemClickListener(article);
+                }
+            });
+        }
+
+        public interface AdapterClickLister{
+            void onItemClickListener(Article article);
         }
     }
 }

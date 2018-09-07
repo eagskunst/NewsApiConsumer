@@ -5,28 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".FullArticleActivity"
     android:animateLayoutChanges="true"
     >
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
         <include layout="@layout/actionbar_toolbar"/>
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabMaxWidth="0dp"
-            app:tabMode="fixed"
-            />
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
+
+        <WebView
+            android:id="@+id/mainwebview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
+            android:visibility="invisible"
             />
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

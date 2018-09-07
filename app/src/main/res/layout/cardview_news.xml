@@ -53,17 +53,17 @@
             android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        
-        <TextView
+        <Button
             android:id="@+id/action_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
             android:text="@string/ver"
             android:textStyle="bold"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="10dp"
             android:textColor="@color/colorAccent"
+            android:clickable="true"
+            android:focusable="true"
             />
 
     </LinearLayout>
