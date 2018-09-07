@@ -11,13 +11,11 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.eagskunst.shokworks.objects.Article;
 import com.eagskunst.shokworks.utility.PreferencesHandler;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +90,7 @@ public class FullArticleActivity extends AppCompatActivity {
                     savedList.add(0,article);
                     Log.d(TAG, "onOptionsItemSelected: size: "+savedList.size());
                     savedItem.setIcon(R.drawable.ic_action_save);
+                    Toast.makeText(this, R.string.saving, Toast.LENGTH_SHORT).show();
                 }
                 else {
                     isSaved = false;

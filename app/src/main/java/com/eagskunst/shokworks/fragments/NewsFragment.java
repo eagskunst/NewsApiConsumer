@@ -3,6 +3,8 @@ package com.eagskunst.shokworks.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eagskunst.shokworks.FullArticleActivity;
 import com.eagskunst.shokworks.MainActivity;
@@ -27,6 +31,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class NewsFragment extends Fragment implements MainActivity.FragmentChanged{
@@ -40,7 +46,6 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
     private ArticlesLoader.onFinishListener onArticlesLoaded;
     private NewsAdapter newsAdapter;
     private List<Article> articleList = new ArrayList<>();
-
 
     public NewsFragment() {
         // Required empty public constructor
@@ -72,27 +77,54 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
                 @Override
                 public void doOnFinish(Info info) {
                     articleList = info.getArticleList();
-                    newsAdapter.setArticleList(articleList);
-                    Log.d(TAG, "doOnFinish: Enter onFinish"+articleList.get(0).getTitle());
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            newsAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    try{
+                        newsAdapter.setArticleList(articleList);
+                        Log.d(TAG, "doOnFinish: Enter onFinish"+articleList.get(0).getTitle());
+                    }catch(NullPointerException e){
+                        Toast.makeText(getActivity(), R.string.failed_retrieve, Toast.LENGTH_SHORT).show();
+                    }finally {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                newsAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
                 }
             };
-            ArticlesLoader loader = new ArticlesLoader(URL,onArticlesLoaded);
-            loader.execute(new Object());
+            if(isConnectedToInternet(getActivity().getApplicationContext())){
+                ArticlesLoader loader = new ArticlesLoader(URL,onArticlesLoaded);
+                loader.execute(new Object());
+            }
+            else{
+                Toast.makeText(getActivity(), R.string.connect_internet, Toast.LENGTH_SHORT).show();
+                Timer timer = new Timer();
+                timer.schedule(connectionTask(timer),0,4000);
+            }
         }
         else {
             onFragmentShow();
         }
         newsAdapter = new NewsAdapter(articleList,viewArticle());
+
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
 
         manageRecyclerView(recyclerView);
         return view;
+    }
+
+    private TimerTask connectionTask(final Timer timer) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                if(isConnectedToInternet(getActivity().getApplicationContext())){
+                    Log.d(TAG, "run: enter timer task");
+                    ArticlesLoader loader = new ArticlesLoader(URL,onArticlesLoaded);
+                    loader.execute(new Object());
+                    timer.cancel();
+                }
+            }
+        };
     }
 
     private NewsAdapter.NewsViewHolder.AdapterClickLister viewArticle() {
@@ -125,7 +157,8 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
         articleList.clear();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("USER_PREFERENCES",Context.MODE_PRIVATE);
         articleList.addAll(PreferencesHandler.loadList(sharedPreferences));
-        newsAdapter.notifyDataSetChanged();
+        if(newsAdapter != null)
+            newsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -133,5 +166,11 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
         if(requestCode == 1 && resultCode == 1){
             onFragmentShow();
         }
+    }
+    private boolean isConnectedToInternet(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

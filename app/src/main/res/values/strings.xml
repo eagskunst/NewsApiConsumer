@@ -8,4 +8,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save">Guardar</string>
+    <string name="failed_retrieve">Error cargando los artículos. Intenta mas tarde</string>
+    <string name="connect_internet">Conectate a internet. Intentando otra vez en 4 segundos</string>
+    <string name="no_saved_articles">Aún no has guardado artículos</string>
+    <string name="saving">Guardando artículo...</string>
 </resources>

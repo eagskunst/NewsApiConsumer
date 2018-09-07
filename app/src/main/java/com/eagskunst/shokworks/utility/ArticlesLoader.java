@@ -16,6 +16,8 @@ public class ArticlesLoader extends AsyncTask {
     private onFinishListener finishListener;
 
     public ArticlesLoader(String URL, onFinishListener finishListener){
+        if(URL == null || URL.isEmpty())
+            URL = "";
         this.URL = URL;
         this.finishListener = finishListener;
     }

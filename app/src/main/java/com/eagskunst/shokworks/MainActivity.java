@@ -9,11 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.eagskunst.shokworks.fragments.NewsFragment;
-import com.eagskunst.shokworks.fragments.PageAdapter;
+import com.eagskunst.shokworks.adapters.PageAdapter;
 import com.eagskunst.shokworks.objects.Article;
-import com.eagskunst.shokworks.objects.Source;
 import com.eagskunst.shokworks.utility.PreferencesHandler;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.eagskunst.shokworks.fragments;
+package com.eagskunst.shokworks.adapters;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.eagskunst.shokworks.R;
+import com.eagskunst.shokworks.fragments.NewsFragment;
 
 public class PageAdapter extends FragmentPagerAdapter {
 
