@@ -8,6 +8,7 @@ Puedes descargar el [apk](https://github.com/eagskunst/Shokworks/blob/master/Sho
 
 * [Picasso](http://square.github.io/picasso/)
 * [Gson](https://github.com/google/gson)
+* [Retrofit](https://square.github.io/retrofit/)
 
 ## Build
 1. Abre Android Studio.
@@ -20,6 +21,7 @@ Puedes descargar el [apk](https://github.com/eagskunst/Shokworks/blob/master/Sho
 * [Documentación de NewsAPI](https://newsapi.org/docs)
 * [CardViews con Material Design](https://stackoverflow.com/questions/33097983/android-check-internet-connection-automatically)
 * [Documentación de Gson](https://github.com/google/gson/blob/master/UserGuide.md)
+* [Consumir una API con Retrofit y Gson](https://stories.devacademy.la/mi-primer-app-con-retrofit-y-android-ac61a8954a2c)
 * [Navegación con swipe entre tabs](https://developer.android.com/training/implementing-navigation/lateral)
 * [Utilzar timer para chequear conexión a internet](https://stackoverflow.com/questions/33097983/android-check-internet-connection-automatically)
 * [Manejar acciones en la barra de app](https://developer.android.com/training/appbar/actions)

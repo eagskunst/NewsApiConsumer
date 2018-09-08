@@ -39,10 +39,7 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
 
     private boolean isSavedFragment;
     private final String TAG = "NewsFragment";
-    private final String URL = "https://newsapi.org/v2/top-headlines?" +
-            "sources=el-mundo,cnn-es,la-nacion,la-gaceta,infobae,google-news-ar&" +
-            "apiKey=8416a9711e5f4969a01f6e1c55ae75da";
-
+    private final String URL = "https://newsapi.org/v2/";
     private ArticlesLoader.onFinishListener onArticlesLoaded;
     private NewsAdapter newsAdapter;
     private List<Article> articleList = new ArrayList<>();
@@ -94,7 +91,8 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
             };
             if(isConnectedToInternet(getActivity().getApplicationContext())){
                 ArticlesLoader loader = new ArticlesLoader(URL,onArticlesLoaded);
-                loader.execute(new Object());
+                loader.makeCall();
+                loader.articlesOnCallback();
             }
             else{
                 Toast.makeText(getActivity(), R.string.connect_internet, Toast.LENGTH_SHORT).show();
@@ -120,7 +118,10 @@ public class NewsFragment extends Fragment implements MainActivity.FragmentChang
                 if(isConnectedToInternet(getActivity().getApplicationContext())){
                     Log.d(TAG, "run: enter timer task");
                     ArticlesLoader loader = new ArticlesLoader(URL,onArticlesLoaded);
-                    loader.execute(new Object());
+                    loader.makeCall();
+                    loader.articlesOnCallback();
+                    if(articleList.isEmpty())
+                        Toast.makeText(getActivity(), R.string.failed_retrieve, Toast.LENGTH_SHORT).show();
                     timer.cancel();
                 }
             }
